@@ -329,64 +329,14 @@
 
 <main class="container">
 
-  <!-- SUMMARY STATS -->
-  <section>
-    <div class="section-label"><span class="material-icons-round">summarize</span> Översikt</div>
-    <h2 class="section-title">Nyckeltal från remissen</h2>
-    <div class="summary-grid">
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#fde7e7; color:#ba1a1a;">
-          <span class="material-icons-round">priority_high</span>
-        </div>
-        <div class="stat-number" style="color:#ba1a1a;">2</div>
-        <div class="stat-label">Kritiska teman att adressera omgående</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#fff3e0; color:#7a5900;">
-          <span class="material-icons-round">warning</span>
-        </div>
-        <div class="stat-number" style="color:#7a5900;">2</div>
-        <div class="stat-label">Teman med hög prioritet</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:#e8f5e9; color:#1b5e20;">
-          <span class="material-icons-round">info</span>
-        </div>
-        <div class="stat-number" style="color:#1b5e20;">5</div>
-        <div class="stat-label">Teman med medelhög prioritet</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:var(--md-sys-color-primary-container); color:var(--md-sys-color-primary);">
-          <span class="material-icons-round">groups</span>
-        </div>
-        <div class="stat-number" style="color:var(--md-sys-color-primary);">21</div>
-        <div class="stat-label">Respondenter (regioner)</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:var(--md-sys-color-secondary-container); color:var(--md-sys-color-secondary);">
-          <span class="material-icons-round">repeat</span>
-        </div>
-        <div class="stat-number" style="color:var(--md-sys-color-secondary);">1</div>
-        <div class="stat-label">Tema som nämns av nästan alla respondenter</div>
-      </div>
-    </div>
-  </section>
-
   <!-- CHARTS -->
   <section>
     <div class="section-label"><span class="material-icons-round">bar_chart</span> Visualiseringar</div>
     <h2 class="section-title">Hur ofta nämns varje tema?</h2>
-    <div class="chart-grid">
-      <div class="chart-card">
-        <h3>Teman efter förekomst</h3>
-        <p>Uppskattad frekvens baserat på respondenter 2–8 (av 21)</p>
-        <canvas id="frequencyChart" height="280"></canvas>
-      </div>
-      <div class="chart-card">
-        <h3>Prioritetsfördelning</h3>
-        <p>Andel teman per prioritetsnivå</p>
-        <canvas id="priorityChart" height="280"></canvas>
-      </div>
+    <div class="chart-card" style="max-width:700px;">
+      <h3>Teman efter förekomst</h3>
+      <p>Uppskattad frekvens baserat på respondenter 2–8 (av 21)</p>
+      <canvas id="frequencyChart" height="280"></canvas>
     </div>
   </section>
 
@@ -759,41 +709,6 @@
         y: {
           grid: { display: false },
           ticks: { font: { size: 11 } }
-        }
-      }
-    }
-  });
-
-  // ── Priority Donut ──
-  const prioCtx = document.getElementById('priorityChart').getContext('2d');
-  new Chart(prioCtx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Kritisk', 'Hög prioritet', 'Medelhög prioritet'],
-      datasets: [{
-        data: [2, 2, 5],
-        backgroundColor: ['#ba1a1a', '#e67e00', '#1a6b4a'],
-        borderWidth: 0,
-        hoverOffset: 8
-      }]
-    },
-    options: {
-      responsive: true,
-      cutout: '65%',
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            padding: 16,
-            font: { size: 12 },
-            usePointStyle: true,
-            pointStyleWidth: 10
-          }
-        },
-        tooltip: {
-          callbacks: {
-            label: ctx => ` ${ctx.parsed} teman (${Math.round(ctx.parsed/9*100)}%)`
-          }
         }
       }
     }
