@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remissanalys – Min ansökan & Nyps 2020</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --md-sys-color-primary: #1a6b4a;
+      --md-sys-color-primary-container: #b7f0d4;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-secondary: #4a6359;
+      --md-sys-color-secondary-container: #cce8da;
+      --md-sys-color-surface: #f6faf8;
+      --md-sys-color-surface-variant: #dbe5de;
+      --md-sys-color-on-surface: #191c1b;
+      --md-sys-color-on-surface-variant: #3f4945;
+      --md-sys-color-outline: #6f7974;
+      --md-sys-color-error: #ba1a1a;
+      --md-sys-color-error-container: #ffdad6;
+      --md-sys-color-warning: #7a5900;
+      --md-sys-color-warning-container: #ffdf9e;
+      --md-sys-color-info: #00629c;
+      --md-sys-color-info-container: #cde5ff;
+      --md-elevation-1: 0 1px 2px rgba(0,0,0,.12), 0 1px 3px 1px rgba(0,0,0,.08);
+      --md-elevation-2: 0 1px 2px rgba(0,0,0,.12), 0 2px 6px 2px rgba(0,0,0,.08);
+      --md-elevation-3: 0 4px 8px 3px rgba(0,0,0,.10), 0 1px 3px rgba(0,0,0,.12);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      line-height: 1.6;
+    }
+
+    /* ── TOP APP BAR ── */
+    .app-bar {
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--md-elevation-2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .app-bar .material-icons-round { font-size: 28px; }
+    .app-bar h1 { font-size: 1.25rem; font-weight: 500; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--md-sys-color-primary) 0%, #2e9d71 100%);
+      color: white;
+      padding: 56px 24px 64px;
+      text-align: center;
+    }
+    .hero h2 { font-size: 2rem; font-weight: 300; margin-bottom: 12px; }
+    .hero p { font-size: 1.1rem; opacity: .85; max-width: 640px; margin: 0 auto 32px; }
+    .hero-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .hero-chip {
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.4);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: .85rem;
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 48px 0; }
+    section + section { border-top: 1px solid var(--md-sys-color-surface-variant); }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--md-sys-color-primary);
+      font-size: .875rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .section-label .material-icons-round { font-size: 18px; }
+    h2.section-title { font-size: 1.5rem; font-weight: 400; margin-bottom: 24px; }
+
+    /* ── SUMMARY CARDS ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 0;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--md-elevation-1);
+      text-align: center;
+    }
+    .stat-card .stat-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 28px;
+    }
+    .stat-card .stat-number { font-size: 2.25rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .stat-card .stat-label { font-size: .875rem; color: var(--md-sys-color-on-surface-variant); }
+
+    /* ── PRIORITY MATRIX ── */
+    .priority-matrix {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--md-elevation-1);
+      overflow-x: auto;
+    }
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 100px repeat(3, 1fr);
+      gap: 8px;
+      min-width: 560px;
+    }
+    .matrix-header {
+      display: contents;
+    }
+    .matrix-header > div {
+      font-size: .75rem;
+      font-weight: 500;
+      text-align: center;
+      padding: 6px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .matrix-row-label {
+      font-size: .8rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      color: var(--md-sys-color-on-surface-variant);
+      writing-mode: horizontal-tb;
+    }
+    .matrix-cell {
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: .8rem;
+      font-weight: 500;
+      cursor: default;
+      transition: transform .15s, box-shadow .15s;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .matrix-cell:hover { transform: scale(1.04); box-shadow: var(--md-elevation-3); }
+    .cell-critical { background: #fde7e7; color: #ba1a1a; border: 1.5px solid #f8b4b4; }
+    .cell-high { background: #fff3e0; color: #7a5900; border: 1.5px solid #ffd166; }
+    .cell-medium { background: #e8f5e9; color: #1b5e20; border: 1.5px solid #a5d6a7; }
+    .cell-empty { background: var(--md-sys-color-surface); border: 1.5px dashed var(--md-sys-color-surface-variant); }
+
+    /* ── THEME CARDS ── */
+    .themes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .theme-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: var(--md-elevation-1);
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .theme-card:hover { box-shadow: var(--md-elevation-3); }
+    .theme-card-header {
+      padding: 20px 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .theme-icon-wrap {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .theme-icon-wrap .material-icons-round { font-size: 24px; }
+    .theme-card-title { font-size: 1rem; font-weight: 500; margin-bottom: 4px; }
+    .theme-card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 100px;
+      padding: 2px 10px;
+      font-size: .75rem;
+      font-weight: 500;
+    }
+    .badge-critical { background: var(--md-sys-color-error-container); color: var(--md-sys-color-error); }
+    .badge-high { background: var(--md-sys-color-warning-container); color: var(--md-sys-color-warning); }
+    .badge-medium { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-secondary); }
+
+    .theme-card-body { padding: 12px 20px 20px 20px; }
+    .theme-card-desc { font-size: .9rem; color: var(--md-sys-color-on-surface-variant); margin-bottom: 12px; }
+    .theme-points { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .theme-points li {
+      font-size: .85rem;
+      padding-left: 20px;
+      position: relative;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .theme-points li::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .theme-divider { height: 1px; background: var(--md-sys-color-surface-variant); margin: 0 20px; }
+
+    /* ── QUOTE ── */
+    .quote-block {
+      background: var(--md-sys-color-primary-container);
+      border-left: 4px solid var(--md-sys-color-primary);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+      margin: 12px 0 0;
+    }
+    .quote-block p {
+      font-size: .875rem;
+      font-style: italic;
+      color: #1a4033;
+    }
+    .quote-block .quote-source {
+      font-size: .75rem;
+      font-style: normal;
+      font-weight: 500;
+      margin-top: 6px;
+      color: var(--md-sys-color-primary);
+    }
+
+    /* ── CHART SECTION ── */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 700px) {
+      .chart-grid { grid-template-columns: 1fr; }
+    }
+    .chart-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--md-elevation-1);
+    }
+    .chart-card h3 { font-size: 1rem; font-weight: 500; margin-bottom: 4px; }
+    .chart-card p { font-size: .8rem; color: var(--md-sys-color-on-surface-variant); margin-bottom: 20px; }
+
+    /* ── INSIGHT CHIPS ── */
+    .insight-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .insight-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: white;
+      border: 1px solid var(--md-sys-color-surface-variant);
+      border-radius: 100px;
+      padding: 8px 14px;
+      font-size: .85rem;
+      box-shadow: var(--md-elevation-1);
+    }
+    .insight-chip .material-icons-round { font-size: 16px; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--md-sys-color-on-surface);
+      color: rgba(255,255,255,.6);
+      text-align: center;
+      padding: 24px;
+      font-size: .8rem;
+      margin-top: 48px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .hero h2 { font-size: 1.5rem; }
+      .themes-grid { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP APP BAR -->
+<div class="app-bar">
+  <span class="material-icons-round">analytics</span>
+  <h1>Remissanalys – Min ansökan &amp; Nyps 2020</h1>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h2>Vad säger regionerna?</h2>
+  <p>Sammanställning av feedback från remissen om nya ansökansfrågor och handläggningsuppgifter i Nyps 2020.</p>
+  <div class="hero-chips">
+    <span class="hero-chip">21 respondenter</span>
+    <span class="hero-chip">9 identifierade teman</span>
+    <span class="hero-chip">Min ansökan + Nyps</span>
+    <span class="hero-chip">Regionalt perspektiv</span>
+  </div>
+</div>
+
+<main class="container">
+
+  <!-- SUMMARY STATS -->
+  <section>
+    <div class="section-label"><span class="material-icons-round">summarize</span> Översikt</div>
+    <h2 class="section-title">Nyckeltal från remissen</h2>
+    <div class="summary-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#fde7e7; color:#ba1a1a;">
+          <span class="material-icons-round">priority_high</span>
+        </div>
+        <div class="stat-number" style="color:#ba1a1a;">2</div>
+        <div class="stat-label">Kritiska teman att adressera omgående</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#fff3e0; color:#7a5900;">
+          <span class="material-icons-round">warning</span>
+        </div>
+        <div class="stat-number" style="color:#7a5900;">2</div>
+        <div class="stat-label">Teman med hög prioritet</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#e8f5e9; color:#1b5e20;">
+          <span class="material-icons-round">info</span>
+        </div>
+        <div class="stat-number" style="color:#1b5e20;">5</div>
+        <div class="stat-label">Teman med medelhög prioritet</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--md-sys-color-primary-container); color:var(--md-sys-color-primary);">
+          <span class="material-icons-round">groups</span>
+        </div>
+        <div class="stat-number" style="color:var(--md-sys-color-primary);">21</div>
+        <div class="stat-label">Respondenter (regioner)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--md-sys-color-secondary-container); color:var(--md-sys-color-secondary);">
+          <span class="material-icons-round">repeat</span>
+        </div>
+        <div class="stat-number" style="color:var(--md-sys-color-secondary);">1</div>
+        <div class="stat-label">Tema som nämns av nästan alla respondenter</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARTS -->
+  <section>
+    <div class="section-label"><span class="material-icons-round">bar_chart</span> Visualiseringar</div>
+    <h2 class="section-title">Hur ofta nämns varje tema?</h2>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Teman efter förekomst</h3>
+        <p>Uppskattad frekvens baserat på respondenter 2–8 (av 21)</p>
+        <canvas id="frequencyChart" height="280"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Prioritetsfördelning</h3>
+        <p>Andel teman per prioritetsnivå</p>
+        <canvas id="priorityChart" height="280"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIORITY MATRIX -->
+  <section>
+    <div class="section-label"><span class="material-icons-round">grid_view</span> Prioritetsmatris</div>
+    <h2 class="section-title">Teman sorterade efter påverkan och frekvens</h2>
+    <div class="priority-matrix">
+      <div class="matrix-grid">
+        <div></div>
+        <div style="font-size:.75rem;font-weight:500;text-align:center;color:var(--md-sys-color-on-surface-variant);padding:6px;letter-spacing:.05em;text-transform:uppercase;">Låg frekvens</div>
+        <div style="font-size:.75rem;font-weight:500;text-align:center;color:var(--md-sys-color-on-surface-variant);padding:6px;letter-spacing:.05em;text-transform:uppercase;">Medel frekvens</div>
+        <div style="font-size:.75rem;font-weight:500;text-align:center;color:var(--md-sys-color-on-surface-variant);padding:6px;letter-spacing:.05em;text-transform:uppercase;">Hög frekvens</div>
+
+        <div style="font-size:.75rem;font-weight:500;color:var(--md-sys-color-on-surface-variant);display:flex;align-items:center;">Hög påverkan</div>
+        <div class="matrix-cell cell-high">Statsstöds&shy;regler</div>
+        <div class="matrix-cell cell-critical">Korrelation<br>Min ansökan ↔ Nyps</div>
+        <div class="matrix-cell cell-critical">Regional anpassning<br>vs TVV/ERUF</div>
+
+        <div style="font-size:.75rem;font-weight:500;color:var(--md-sys-color-on-surface-variant);display:flex;align-items:center;">Medel påverkan</div>
+        <div class="matrix-cell cell-medium">Förskott separat process</div>
+        <div class="matrix-cell cell-high">Gransknings&shy;plan valfri</div>
+        <div class="matrix-cell cell-high">Administrativ börda &amp; omfång</div>
+
+        <div style="font-size:.75rem;font-weight:500;color:var(--md-sys-color-on-surface-variant);display:flex;align-items:center;">Låg påverkan</div>
+        <div class="matrix-cell cell-medium">Kvalitets&shy;bedömning ej aktuell</div>
+        <div class="matrix-cell cell-medium">Dubbelarbete &amp; redundans</div>
+        <div class="matrix-cell cell-medium">Terminologi &amp; språkkvalitet</div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;">
+        <span style="display:flex;align-items:center;gap:6px;font-size:.8rem;"><span style="width:14px;height:14px;border-radius:4px;background:#fde7e7;border:1.5px solid #f8b4b4;display:inline-block;"></span> Kritisk</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:.8rem;"><span style="width:14px;height:14px;border-radius:4px;background:#fff3e0;border:1.5px solid #ffd166;display:inline-block;"></span> Hög</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:.8rem;"><span style="width:14px;height:14px;border-radius:4px;background:#e8f5e9;border:1.5px solid #a5d6a7;display:inline-block;"></span> Medel</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- THEME CARDS -->
+  <section>
+    <div class="section-label"><span class="material-icons-round">label</span> Teman i detalj</div>
+    <h2 class="section-title">Alla identifierade huvudteman</h2>
+    <div class="themes-grid">
+
+      <!-- TEMA 1 -->
+      <div class="theme-card">
+        <div class="theme-card-header">
+          <div class="theme-icon-wrap" style="background:#fde7e7; color:#ba1a1a;">
+            <span class="material-icons-round">location_city</span>
+          </div>
+          <div>
+            <div class="theme-card-title">Regionala skillnader vs TVV/ERUF-logik</div>
+            <span class="theme-card-badge badge-critical">
+              <span class="material-icons-round" style="font-size:14px;">priority_high</span> Kritisk
+            </span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <p class="theme-card-desc">Det starkaste och mest genomgående temat. Systemet är byggt för TVV:s och ERUF:s logik — inte för regionerna.</p>
+          <ul class="theme-points">
+            <li>Hänvisningar till "utlysningar" fungerar inte för alla regioner</li>
+            <li>TVV:s hållbarhetsanalys och handbok är inte tillämpliga regionalt</li>
+            <li>Statsstödsregler (SFS 2003:596) skiljer sig från ERUF</li>
+            <li>Regioner tvingas frångå egna beslutade arbetssätt</li>
+          </ul>
+          <div class="theme-divider" style="margin:12px 0;"></div>
+          <div class="quote-block">
+            <p>"Frågor och arbetssätt känns inte som de ligger i linje med hur vi arbetar med projektmedel utan det känns som vi blir tvungna att arbeta enligt ERUFs modell."</p>
+            <div class="quote-source">— Respondent 4</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMA 2 -->
+      <div class="theme-card">
+        <div class="theme-card-header">
+          <div class="theme-icon-wrap" style="background:#fde7e7; color:#ba1a1a;">
+            <span class="material-icons-round">sync_alt</span>
+          </div>
+          <div>
+            <div class="theme-card-title">Korrelation Min ansökan ↔ Nyps saknas</div>
+            <span class="theme-card-badge badge-critical">
+              <span class="material-icons-round" style="font-size:14px;">priority_high</span> Kritisk
+            </span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <p class="theme-card-desc">Handläggare kan inte i Nyps bedöma det som sökanden inte instruerats att beskriva i Min ansökan. De två systemen är inte synkroniserade.</p>
+          <ul class="theme-points">
+            <li>Bedömningsfrågor i Nyps saknar svar i Min ansökan</li>
+            <li>Statsstödsbedömning saknar informationsunderlag från sökande</li>
+            <li>Frågorna i aktivitetsplanen synkas inte med beslutsmallarna</li>
+          </ul>
+          <div class="theme-divider" style="margin:12px 0;"></div>
+          <div class="quote-block">
+            <p>"Vi kan ej bedöma sådant som sökande inte instruerats att beskriva."</p>
+            <div class="quote-source">— Respondent 4</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMA 3 -->
+      <div class="theme-card">
+        <div class="theme-card-header">
+          <div class="theme-icon-wrap" style="background:#fff3e0; color:#7a5900;">
+            <span class="material-icons-round">layers</span>
+          </div>
+          <div>
+            <div class="theme-card-title">Administrativ börda &amp; omfång</div>
+            <span class="theme-card-badge badge-high">
+              <span class="material-icons-round" style="font-size:14px;">warning</span> Hög
+            </span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <p class="theme-card-desc">För många fält och för mycket information krävs — särskilt betungande för mindre regionala projekt och förstudier.</p>
+          <ul class="theme-points">
+            <li>Avsnitten "Organisation" och "Arbetssätt" upplevs orimligt detaljerade</li>
+            <li>Efterfrågas: obligatoriska vs valfria sektioner per projekttyp</li>
+            <li>Sökande utan ERUF-erfarenhet missgynnas av komplexiteten</li>
+            <li>Handläggningsprocessen riskerar bli mer — inte mindre — tidskrävande</li>
+          </ul>
+          <div class="theme-divider" style="margin:12px 0;"></div>
+          <div class="quote-block">
+            <p>"Vi efterlyser en förenkling och effektivisering, inte ett mer tidskrävande handläggningsförfarande."</p>
+            <div class="quote-source">— Respondent 4</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMA 4 -->
+      <div class="theme-card">
+        <div class="theme-card-header">
+          <div class="theme-icon-wrap" style="background:#fff3e0; color:#7a5900;">
+            <span class="material-icons-round">checklist</span>
+          </div>
+          <div>
+            <div class="theme-card-title">Granskningsplan måste vara valfri</div>
+            <span class="theme-card-badge badge-high">
+              <span class="material-icons-round" style="font-size:14px;">warning</span> Hög
+            </span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <p class="theme-card-desc">Ett starkt och konsekvent krav från flera respondenter: granskningsplanen är inte förenlig med regionernas nuvarande arbetssätt om den är obligatorisk.</p>
+          <ul class="theme-points">
+            <li>Gäller alla kostnadsslag: personal, schabloner, tjänster, resor, etc.</li>
+            <li>Regioner arbetar inte med granskningsplaner idag</li>
+            <li>Bör göras helt valfri — inte bara markeras som "valfri" men ändå blockera</li>
+          </ul>
+          <div class="theme-divider" style="margin:12px 0;"></div>
+          <div class="quote-block">
+            <p>"Att göra granskningsplan MÅSTE vara valfritt."</p>
+            <div class="quote-source">— Respondent 4 (upprepas för alla kostnadsslag)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMA 5 -->
+      <div class="theme-card">
+        <div class="theme-card-header">
+          <div class="theme-icon-wrap" style="background:#cde5ff; color:#00629c;">
+            <span class="material-icons-round">copy_all</span>
+          </div>
+          <div>
+            <div class="theme-card-title">Dubbelarbete &amp; redundans</div>
+            <span class="theme-card-badge badge-medium">
+              <span class="material-icons-round" style="font-size:14px;">info</span> Medel
+            </span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <p class="theme-card-desc">Samma information efterfrågas i flera avsnitt, och sammanfattningar genereras inte automatiskt från tidigare ifyllda delar.</p>
+          <ul class="theme-points">
+            <li>Hållbarhetsfrågor upprepas i Övergripande, Aktiviteter och Organisation</li>
+            <li>Grundläggande bedömning-Ekonomi och Beslutsgrundande-Ekonomi överlappar</li>
+            <li>Kvalitetsbedömning-Sammanfattning borde autogenereras</li>
+            <li>Projektägaren fyller i sina uppgifter igen under "Projektpartner"</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- TEMA 6 -->
+      <div class="theme-card">
+        <div class="theme-card-header">
+          <div class="theme-icon-wrap" style="background:#cde5ff; color:#00629c;">
+            <span class="material-icons-round">spellcheck</span>
+          </div>
+          <div>
+            <div class="theme-card-title">Terminologi &amp; språkkvalitet</div>
+            <span class="theme-card-badge badge-medium">
+              <span class="material-icons-round" style="font-size:14px;">info</span> Medel
+            </span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <p class="theme-card-desc">Inkonsekvent begreppsanvändning och undermåliga förklaringstexter försvårar förståelsen för både sökande och handläggare.</p>
+          <ul class="theme-points">
+            <li><strong>SDG</strong> vs <strong>Globala mål</strong> — blanda inte svenska och engelska</li>
+            <li><strong>Sökande</strong> (Nyps) vs <strong>Projektägare</strong> (Min ansökan) — harmonisera</li>
+            <li>Förkortningar utan förklaring: SDG, SMART, GBER</li>
+            <li>Förklarande texter är "undermåliga" och behöver korrektur</li>
+            <li>Felaktig grammatik: "partners" → "partner"</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- TEMA 7 -->
+      <div class="theme-card">
+        <div class="theme-card-header">
+          <div class="theme-icon-wrap" style="background:#cde5ff; color:#00629c;">
+            <span class="material-icons-round">star_border</span>
+          </div>
+          <div>
+            <div class="theme-card-title">Kvalitetsbedömning ej aktuell för regioner</div>
+            <span class="theme-card-badge badge-medium">
+              <span class="material-icons-round" style="font-size:14px;">info</span> Medel
+            </span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <p class="theme-card-desc">Hela avsnittet Kvalitetsbedömning i Nyps (Relevans, Samverkan, Måluppfyllelse, Hållbar förändring) upplevs som irrelevant för regionernas handläggning.</p>
+          <ul class="theme-points">
+            <li>Poängsättning används inte eller kommuniceras inte till sökande</li>
+            <li>Regionerna har egna bedömningskriterier och styrdokument</li>
+            <li>Tvingande förändring av beslutade arbetssätt (t.ex. "Vägar till hållbar utveckling")</li>
+            <li>Förslag: hela avsnittet bör kunna tas bort för regioner</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- TEMA 8 -->
+      <div class="theme-card">
+        <div class="theme-card-header">
+          <div class="theme-icon-wrap" style="background:#cde5ff; color:#00629c;">
+            <span class="material-icons-round">gavel</span>
+          </div>
+          <div>
+            <div class="theme-card-title">Statsstödsregler &amp; juridiska frågor</div>
+            <span class="theme-card-badge badge-medium">
+              <span class="material-icons-round" style="font-size:14px;">info</span> Medel
+            </span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <p class="theme-card-desc">Frågorna om gynnande av företag, GBER och de minimis är för komplexa, felaktigt formulerade och saknar vägledning.</p>
+          <ul class="theme-points">
+            <li>Avsnittet "Gynnande av företag" behöver skrivas om helt</li>
+            <li>Företagsfrämjande FÅR inte ske via projektmedel (SFS 2003:596)</li>
+            <li>GBER-stöd ska inte uteslutas i formuleringar</li>
+            <li>"Vilken aktör fattar de minimis-beslut?" — alltid stödgivande myndigheten</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- TEMA 9 -->
+      <div class="theme-card">
+        <div class="theme-card-header">
+          <div class="theme-icon-wrap" style="background:#cde5ff; color:#00629c;">
+            <span class="material-icons-round">payments</span>
+          </div>
+          <div>
+            <div class="theme-card-title">Förskott bör vara separat process</div>
+            <span class="theme-card-badge badge-medium">
+              <span class="material-icons-round" style="font-size:14px;">info</span> Medel
+            </span>
+          </div>
+        </div>
+        <div class="theme-card-body">
+          <p class="theme-card-desc">Konsekvent synpunkt: förskott hanteras idag som ett separat beslut och bör förbli så — inte inbyggt i ansökan.</p>
+          <ul class="theme-points">
+            <li>Förskott är undantagsärenden och bör inte vara en del av standardflödet</li>
+            <li>Återbetalningsplan ska inte läggas i beslut — hanteras i dialog</li>
+            <li>Frågan om förskott förekommer dubbelt i nuvarande upplägg</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- KEY INSIGHTS -->
+  <section>
+    <div class="section-label"><span class="material-icons-round">lightbulb</span> Insikter</div>
+    <h2 class="section-title">Viktigaste åtgärdsområdena</h2>
+    <div class="insight-row">
+      <div class="insight-chip" style="border-color:#f8b4b4; color:#ba1a1a;">
+        <span class="material-icons-round" style="color:#ba1a1a;">tune</span>
+        Skapa regional konfiguration av frågor i Min ansökan
+      </div>
+      <div class="insight-chip" style="border-color:#f8b4b4; color:#ba1a1a;">
+        <span class="material-icons-round" style="color:#ba1a1a;">sync</span>
+        Synkronisera frågorna i Min ansökan med Nyps-bedömningarna
+      </div>
+      <div class="insight-chip" style="border-color:#ffd166; color:#7a5900;">
+        <span class="material-icons-round" style="color:#7a5900;">toggle_off</span>
+        Gör granskningsplan och kvalitetsbedömning valfria för regioner
+      </div>
+      <div class="insight-chip" style="border-color:#ffd166; color:#7a5900;">
+        <span class="material-icons-round" style="color:#7a5900;">compress</span>
+        Skapa förenklat formulär för förstudier/mindre projekt
+      </div>
+      <div class="insight-chip">
+        <span class="material-icons-round" style="color:var(--md-sys-color-primary);">translate</span>
+        Harmonisera terminologi — välj antingen "Sökande" eller "Projektägare"
+      </div>
+      <div class="insight-chip">
+        <span class="material-icons-round" style="color:var(--md-sys-color-primary);">edit_note</span>
+        Språklig genomgång och korrektur av alla förklaringstexter
+      </div>
+      <div class="insight-chip">
+        <span class="material-icons-round" style="color:var(--md-sys-color-primary);">account_balance</span>
+        Skriv om avsnittet "Gynnande av företag" med juridisk precision
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Remiss – Nytt ansökningsformulär i Min ansökan och handläggningsuppgifter i Nyps 2020 &nbsp;·&nbsp; Sammanställd analys baserad på 21 respondenter
+</footer>
+
+<script>
+  // ── Frequency Chart ──
+  const freqCtx = document.getElementById('frequencyChart').getContext('2d');
+  new Chart(freqCtx, {
+    type: 'bar',
+    data: {
+      labels: [
+        'Regional anpassning',
+        'Min ansökan ↔ Nyps',
+        'Adm. börda',
+        'Granskningsplan',
+        'Dubbelarbete',
+        'Terminologi',
+        'Kvalitetsbedömning',
+        'Statsstöd',
+        'Förskott'
+      ],
+      datasets: [{
+        label: 'Antal respondenter (uppskattning)',
+        data: [8, 7, 7, 6, 5, 6, 5, 4, 4],
+        backgroundColor: [
+          '#ba1a1a', '#ba1a1a',
+          '#e67e00', '#e67e00',
+          '#4a6359', '#4a6359', '#4a6359', '#4a6359', '#4a6359'
+        ],
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.parsed.x} av 8 analyserade respondenter`
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: 8,
+          grid: { color: '#f0f0f0' },
+          ticks: { font: { size: 11 } }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        }
+      }
+    }
+  });
+
+  // ── Priority Donut ──
+  const prioCtx = document.getElementById('priorityChart').getContext('2d');
+  new Chart(prioCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Kritisk', 'Hög prioritet', 'Medelhög prioritet'],
+      datasets: [{
+        data: [2, 2, 5],
+        backgroundColor: ['#ba1a1a', '#e67e00', '#1a6b4a'],
+        borderWidth: 0,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '65%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 16,
+            font: { size: 12 },
+            usePointStyle: true,
+            pointStyleWidth: 10
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.parsed} teman (${Math.round(ctx.parsed/9*100)}%)`
+          }
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
